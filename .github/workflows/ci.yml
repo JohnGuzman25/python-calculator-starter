@@ -20,15 +20,51 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install -e .
 
       - name: Lint with pylint (non-blocking)
+        env:
+          PYTHONPATH: src
+        run: |
+          pylint src tes
+
+# overwrite the workflow to a simple, green version
+mkdir -p .github/workflows
+
+cat > .github/workflows/ci.yml <<'YAML'
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint with pylint (non-blocking)
+        env:
+          PYTHONPATH: src
         run: |
           pylint src tests || true
 
       - name: Run tests with coverage
+        env:
+          PYTHONPATH: src
         run: |
-          pytest --cov=calculator --cov-report=xml --cov-report=term-missing
+          pytest --cov=src/calculator --cov-report=xml --cov-report=term-missing
 
       - name: Upload coverage.xml
         uses: actions/upload-artifact@v4
