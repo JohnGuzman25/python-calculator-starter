@@ -33,3 +33,11 @@ def test_divide(a, b, expected):
 def test_divide_by_zero():
     with pytest.raises(ValueError):
         calc.divide(1, 0)
+
+def test_add_large_numbers():
+    from calculator import calc
+    assert calc.add(10**6, 10**6) == 2_000_000
+
+def test_multiply_by_zero():
+    from calculator import calc
+    assert calc.multiply(12345, 0) == 0
